@@ -1,4 +1,4 @@
-# Cwhip project template
+# Cwhip application template
 
 `cwhip-template` is a small starter for Cwhip applications against an installed
 SDK. Source:
