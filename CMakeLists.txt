@@ -108,3 +108,15 @@ if(BUILD_TESTING)
         "-DHELLO_EXECUTABLE=${hello_executable}"
         -P "${PROJECT_SOURCE_DIR}/tests/check-greeting.cmake")
 endif()
+
+# cwhip-format reads the root .cwhip-format. The build directory is skipped.
+# A normal build does not run this target.
+add_custom_target(format
+    COMMAND "${CMAKE_COMMAND}"
+        "-DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
+        "-DBINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/format.cmake"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    COMMENT "Formatting Cwhip sources with cwhip-format"
+    USES_TERMINAL
+    VERBATIM)

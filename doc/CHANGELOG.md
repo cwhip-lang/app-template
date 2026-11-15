@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add a `format` target that runs `cwhip-format -i` on the repository's
+  `.cw` files and skips the build directory. The root `.cwhip-format` is
+  the built-in style from `cwhip-format --dump-config`.
 - Add `.gitattributes` so GitHub does not label `.cw` files as RedCode.
 - Point repository links at the `cwhip-lang` GitHub organization.
 - Rename the CTest greeting script to `tests/check-greeting.cmake`.

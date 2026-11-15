@@ -171,6 +171,13 @@ The `hello` CTest smoke test checks the greeting's output and exit status.
 It exercises the callable, parenthesized return, and dictionary in the starter.
 Set `-DBUILD_TESTING=OFF` at configuration time to omit it.
 
+After configuration, `make format` (or `build format` in the project shell)
+rewrites the repository's `*.cw` files in place with `cwhip-format -i`. The
+command runs from the repository root, so the tool reads `.cwhip-format`.
+Files under the build directory are skipped. A normal build does not run
+this target. If `cwhip-format` is not available, the target fails and the
+message names `cwhip-format`.
+
 The Cwhip application helper writes generated sources and package metadata
 inside the build tree. The compiled application is written directly to
 `bin/`. Neither `bin/` nor `lib/` is created during configuration; the build
