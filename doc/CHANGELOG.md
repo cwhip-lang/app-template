@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add a `format` target that runs `cwhip-format -i` on the repository's
+  `.cw` files and skips the build directory. The root `.cwhip-format` is
+  the built-in style from `cwhip-format --dump-config`.
 - Rename the CTest greeting script to `tests/check-greeting.cmake`.
   `cwhip-pkg new` rewrites `hello` in text but never renames files, so projects
   it created referenced a missing `tests/check-NAME.cmake` and failed `ctest`.

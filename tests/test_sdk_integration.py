@@ -55,9 +55,9 @@ class SdkIntegrationTests(unittest.TestCase):
     def test_setup_clean_build_and_rebuild_in_project_shell(self):
         project = self.root / "project with spaces"
         project.mkdir()
-        for name in ("CMakeLists.txt", ".project_env"):
+        for name in ("CMakeLists.txt", ".project_env", ".cwhip-format"):
             shutil.copy2(ROOT / name, project)
-        for name in ("src", "scripts", "tests"):
+        for name in ("src", "scripts", "tests", "cmake"):
             shutil.copytree(ROOT / name, project / name)
         for name in ("bin", "build", "lib", "doc/out", "share"):
             directory = project / name
@@ -88,8 +88,9 @@ class SdkIntegrationTests(unittest.TestCase):
     def test_template_build_install_and_generated_metadata(self):
         project = self.root / "project"
         project.mkdir()
-        shutil.copy2(ROOT / "CMakeLists.txt", project)
-        for name in ("src", "scripts", "tests"):
+        for name in ("CMakeLists.txt", ".cwhip-format"):
+            shutil.copy2(ROOT / name, project)
+        for name in ("src", "scripts", "tests", "cmake"):
             shutil.copytree(ROOT / name, project / name)
         build = self.root / "build"
         install = self.root / "install"

@@ -19,9 +19,9 @@ class SdkDiscoveryTests(unittest.TestCase):
         self.root = Path(self.temporary.name)
         self.project = self.root / "project"
         self.project.mkdir()
-        for name in ("CMakeLists.txt", ".project_env"):
+        for name in ("CMakeLists.txt", ".project_env", ".cwhip-format"):
             shutil.copy2(ROOT / name, self.project / name)
-        for name in ("scripts", "src", "tests"):
+        for name in ("scripts", "src", "tests", "cmake"):
             shutil.copytree(ROOT / name, self.project / name)
         self.home = self.root / "home"
         self.home.mkdir()
@@ -724,6 +724,83 @@ class SdkDiscoveryTests(unittest.TestCase):
         self.select(self.home)
         output = self.run_configure(setup=True, success=False)
         self.assertIn("CMake configuration failed", output)
+
+    def test_format_target_checks_cwhip_format_and_skips_build(self):
+        self.run_configure()
+        self.assertTrue((self.build / "Makefile").is_file())
+        listed = subprocess.run(
+            ["cmake", "--build", str(self.build), "--target", "help"],
+            cwd=self.build, env=self.env, capture_output=True, text=True,
+            timeout=60,
+        )
+        self.assertEqual(listed.returncode, 0, listed.stdout + listed.stderr)
+        self.assertIn("format", listed.stdout)
+        planned = subprocess.run(
+            ["make", "-n"], cwd=self.build, env=self.env,
+            capture_output=True, text=True, timeout=60,
+        )
+        self.assertEqual(planned.returncode, 0, planned.stdout + planned.stderr)
+        self.assertNotIn("format.cmake", planned.stdout + planned.stderr)
+        self.assertNotIn("cwhip-format", planned.stdout + planned.stderr)
+
+        source = self.project / "src/main.cw"
+        before = source.read_bytes()
+        # An installed SDK often puts cwhip-format on PATH. The missing-tool
+        # check has to ignore that binary and still report that the target
+        # cannot find cwhip-format.
+        installed = self.root / "installed-sdk" / "bin"
+        installed.mkdir(parents=True)
+        decoy = installed / "cwhip-format"
+        decoy.write_text("#!/bin/sh\nprintf 'installed formatter\\n'\nexit 0\n")
+        decoy.chmod(0o755)
+        self.env["PATH"] = (
+            f"{self.root / 'tools'}{os.pathsep}{installed}{os.pathsep}{self.env['PATH']}"
+        )
+        missing_env = self.env.copy()
+        missing_env["PATH"] = "/usr/bin:/bin"
+        missing = subprocess.run(
+            ["make", "format"], cwd=self.build, env=missing_env,
+            capture_output=True, text=True, timeout=60,
+        )
+        self.assertNotEqual(missing.returncode, 0, missing.stdout + missing.stderr)
+        self.assertIn("cwhip-format was not found", missing.stdout + missing.stderr)
+        self.assertNotIn("installed formatter", missing.stdout + missing.stderr)
+        self.assertEqual(source.read_bytes(), before)
+
+        record = self.root / "format-record.txt"
+        formatter = self.root / "tools" / "cwhip-format"
+        formatter.write_text(
+            "#!/bin/sh\n"
+            'printf "%s\\n" "$PWD" > "$FORMAT_RECORD"\n'
+            'printf "%s\\n" "$@" >> "$FORMAT_RECORD"\n'
+        )
+        formatter.chmod(0o755)
+        self.env["FORMAT_RECORD"] = str(record)
+        late = self.project / "late.cw"
+        late.write_text("start {\n}\n")
+        generated = self.build / "generated.cw"
+        generated.write_text("start {\n}\n")
+        nested = self.build / "nested"
+        nested.mkdir()
+        (nested / "generated.cw").write_text("start {\n}\n")
+        present = subprocess.run(
+            ["make", "format"], cwd=self.build, env=self.env,
+            capture_output=True, text=True, timeout=60,
+        )
+        self.assertEqual(present.returncode, 0, present.stdout + present.stderr)
+        self.assertEqual(source.read_bytes(), before)
+        recorded = record.read_text().splitlines()
+        self.assertEqual(Path(recorded[0]).resolve(), self.project.resolve())
+        args = recorded[1:]
+        self.assertEqual(args[0], "-i")
+        files = {Path(arg).resolve() for arg in args[1:]}
+        self.assertIn(source.resolve(), files)
+        self.assertIn(late.resolve(), files)
+        self.assertNotIn(generated.resolve(), files)
+        self.assertNotIn((nested / "generated.cw").resolve(), files)
+        build_dir = self.build.resolve()
+        self.assertTrue(all(build_dir not in path.parents for path in files))
+        self.assertNotIn("cmake-format", record.read_text())
 
 
 if __name__ == "__main__":
