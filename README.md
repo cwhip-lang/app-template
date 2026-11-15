@@ -1,8 +1,8 @@
 # Cwhip application template
 
-`cwhip-template` is a small starter for Cwhip applications against an installed
+`app-template` is a small starter for Cwhip applications against an installed
 SDK. Source:
-[github.com/chucktilbury/cwhip-template](https://github.com/chucktilbury/cwhip-template).
+[github.com/cwhip-lang/app-template](https://github.com/cwhip-lang/app-template).
 `cwhip-pkg new` downloads this repository and rewrites the heading above to the
 new project name.
 

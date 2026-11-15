@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Add `.gitattributes` so GitHub does not label `.cw` files as RedCode.
+- Point repository links at the `cwhip-lang` GitHub organization.
 - Rename the CTest greeting script to `tests/check-greeting.cmake`.
   `cwhip-pkg new` rewrites `hello` in text but never renames files, so projects
   it created referenced a missing `tests/check-NAME.cmake` and failed `ctest`.
