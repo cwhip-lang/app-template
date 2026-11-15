@@ -1,4 +1,5 @@
 class Greeter {
+    public:
     String message(String name) {
         String text = "Hello, "
         text.append(name)
