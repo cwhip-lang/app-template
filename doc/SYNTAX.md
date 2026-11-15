@@ -38,8 +38,8 @@ identifier.
   case-insensitive; the starter uses lowercase keywords consistently.
   `and`/`&&`, `or`/`||`, and `not`/`!` are equivalent spellings.
 
-The compiler's [grammar](https://github.com/chucktilbury/cwhip/blob/master/doc/GRAMMAR.md)
-and [language reference](https://github.com/chucktilbury/cwhip/blob/master/doc/LANGUAGE-REFERENCE.md)
+The compiler's [grammar](https://github.com/cwhip-lang/cwhip/blob/master/doc/GRAMMAR.md)
+and [language reference](https://github.com/cwhip-lang/cwhip/blob/master/doc/LANGUAGE-REFERENCE.md)
 are the authoritative syntax references. [Building](BUILDING.md#test-template-discovery)
 describes the isolated real-SDK check that builds and runs this source both
 before and after installation.

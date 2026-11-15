@@ -18,7 +18,7 @@ defaults.
 ## Numeric-v2 migration
 
 This template depends on the numeric execution work in
-[chucktilbury/cwhip#25](https://github.com/chucktilbury/cwhip/pull/25) and the
+[cwhip-lang/cwhip#25](https://github.com/cwhip-lang/cwhip/pull/25) and the
 subsequent numeric-v2 SDK/package migration. Until that SDK is published, use
 an explicitly selected rebuilt development SDK; the old installed SDK is not
 compatible. The hello-world starter has no numeric declarations, native
